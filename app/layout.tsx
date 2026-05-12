@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import StepNav from "@/components/StepNav";
-import AiChat from "@/components/AiChat";
+import LayoutShell from "@/components/LayoutShell";
 
 export const metadata: Metadata = {
   title: "LANDOS V1 — Land Development Feasibility",
@@ -12,13 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="th">
       <body>
-        <div className="flex min-h-screen">
-          <StepNav />
-          <main className="flex-1 ml-64 min-h-screen">
-            {children}
-            <AiChat />
-          </main>
-        </div>
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );
