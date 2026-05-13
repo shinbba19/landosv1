@@ -29,7 +29,7 @@ export default function Step1() {
   const pricePerSqWah = totalSqWah > 0 ? landInput.landPrice / totalSqWah : 0;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={1} title="ข้อมูลที่ดิน" subtitle="Land Input — กรอกข้อมูลพื้นฐานของที่ดิน" />
 
       {/* Project Name */}
@@ -46,7 +46,7 @@ export default function Step1() {
       {/* Land Size */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ขนาดที่ดิน</h2>
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
           <div>
             <label className="label">ไร่</label>
             <input
@@ -89,7 +89,7 @@ export default function Step1() {
       {/* Financial */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ข้อมูลราคา</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="label">ราคาซื้อขาย (บาท)</label>
             <input
@@ -139,7 +139,7 @@ export default function Step1() {
       {/* Location & Zoning */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ที่ตั้งและผังเมือง</h2>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="label">ที่ตั้ง / จังหวัด</label>
             <input

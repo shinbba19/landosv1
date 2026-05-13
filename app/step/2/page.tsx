@@ -28,7 +28,7 @@ export default function Step2() {
   const pricePerSqWah = totalSqWah > 0 ? landInput.landPrice / totalSqWah : 0;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={2} title="วิเคราะห์ที่ดิน" subtitle="Land Analysis — คำนวณพื้นที่ใช้งานและจำนวนแปลง" />
 
       {totalSqWah === 0 && (
@@ -40,7 +40,7 @@ export default function Step2() {
       {/* Parameters */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ตัวแปรการวิเคราะห์</h2>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="label">
               สัดส่วนหักถนน / โครงสร้างพื้นฐาน: <span className="font-bold text-brand-600">{landAnalysis.roadDeductionPct}%</span>
@@ -69,7 +69,7 @@ export default function Step2() {
       </div>
 
       {/* Results */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: "พื้นที่ทั้งหมด", value: formatArea(totalSqWah), sub: `${totalSqWah.toLocaleString()} ตร.วา` },
           { label: "หักถนน / สาธารณูปโภค", value: formatArea(landAnalysis.roadAreaSqWah), sub: `${landAnalysis.roadDeductionPct}%` },
@@ -85,7 +85,7 @@ export default function Step2() {
       </div>
 
       {/* Pie chart + cost per lot */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="card">
           <h3 className="text-sm font-semibold text-gray-500 mb-3">การใช้พื้นที่</h3>
           {pieData.length > 0 ? (

@@ -47,8 +47,8 @@ export default function Step6() {
   })();
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <StepHeader step={6} title="สรุปผลการวิเคราะห์" subtitle="Executive Summary Report" className="mb-0" />
         <div className="flex gap-2 no-print">
           <button onClick={() => window.print()} className="btn-secondary flex items-center gap-2 text-sm">
@@ -85,7 +85,7 @@ export default function Step6() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Land & Analysis */}
         <div className="card">
           <Section title="ข้อมูลที่ดิน">
@@ -127,7 +127,8 @@ export default function Step6() {
       {/* Comparison Summary */}
       <div className="card mb-6">
         <Section title="เปรียบเทียบกลยุทธ์">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="overflow-x-auto">
+          <div className="grid grid-cols-3 gap-4 min-w-[320px]">
             <div className="text-sm font-bold text-gray-400 uppercase">ตัวชี้วัด</div>
             <div className="text-sm font-bold text-blue-600 text-center">Quick Sell</div>
             <div className="text-sm font-bold text-brand-600 text-center">Develop & Sell</div>
@@ -145,6 +146,7 @@ export default function Step6() {
               </React.Fragment>
             ))}
           </div>
+          </div>
         </Section>
 
         {/* Recommendation */}
@@ -161,7 +163,7 @@ export default function Step6() {
       {/* Assumptions */}
       <div className="card mb-6 bg-gray-50">
         <Section title="สมมติฐานที่ใช้ในการวิเคราะห์">
-          <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
             <Row label="Preset ต้นทุน" value={devCost.preset.charAt(0).toUpperCase() + devCost.preset.slice(1)} />
             <Row label="ค่าก่อสร้างถนน" value={`${devCost.roadCostPerSqm.toLocaleString()} บาท/ตร.ม.`} />
             <Row label="หักถนน/สาธารณูปโภค" value={`${landAnalysis.roadDeductionPct}%`} />

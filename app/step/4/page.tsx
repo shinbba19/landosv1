@@ -57,13 +57,13 @@ export default function Step4() {
   });
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={4} title="การวิเคราะห์การเงิน" subtitle="Financial Analysis — ผลตอบแทนและความเป็นไปได้" />
 
       {/* Input */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ราคาขาย</h2>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="label">ราคาขายต่อ ตร.วา (บาท)</label>
             <input
@@ -93,7 +93,7 @@ export default function Step4() {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard label="ต้นทุนโครงการรวม" value={formatThb(financial.totalProjectCost)} sub="Land + Infrastructure" />
         <StatCard label="รายได้รวมโดยประมาณ" value={formatThb(financial.grossRevenue)} sub={`${lotCount} แปลง × ${lotSizeSqWah} ตร.วา`} />
         <StatCard label="กำไรขั้นต้น" value={formatThb(financial.grossProfit)}
@@ -104,7 +104,7 @@ export default function Step4() {
           highlight={financial.roi > 0} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Waterfall */}
         <div className="card">
           <h3 className="text-sm font-semibold text-gray-500 mb-3">โครงสร้างกำไร-ขาดทุน</h3>
@@ -152,7 +152,8 @@ export default function Step4() {
       {financial.sellingPricePerSqWah > 0 && (
         <div className="card mb-6">
           <h3 className="text-sm font-semibold text-gray-500 mb-3">ตารางวิเคราะห์ความอ่อนไหว</h3>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="text-xs text-gray-500 border-b">
                 <th className="text-left py-2">การเปลี่ยนแปลงราคาขาย</th>
@@ -180,6 +181,7 @@ export default function Step4() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

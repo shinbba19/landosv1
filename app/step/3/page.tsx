@@ -46,13 +46,13 @@ export default function Step3() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={3} title="ต้นทุนพัฒนา" subtitle="Development Cost — ประมาณการค่าก่อสร้างโครงสร้างพื้นฐาน" />
 
       {/* Presets */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">เลือก Preset</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {(Object.keys(PRESET_LABELS) as Array<keyof typeof PRESET_LABELS>).map((key) => {
             const p = PRESET_LABELS[key];
             return (
@@ -75,7 +75,7 @@ export default function Step3() {
       {/* Quantities */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ปริมาณงาน</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="label">ความยาวถนนภายใน (ม.)</label>
             <input type="number" min={0} className="input-field"
@@ -135,7 +135,7 @@ export default function Step3() {
         <summary className="text-sm font-semibold text-gray-500 uppercase tracking-wider cursor-pointer">
           ราคาต่อหน่วย (แก้ไขได้)
         </summary>
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           {[
             { label: "ถนน (บาท/ตร.ม.)", key: "roadCostPerSqm" as const },
             { label: "ไฟฟ้า (บาท/ม.)", key: "electricityCostPerM" as const },
@@ -153,7 +153,7 @@ export default function Step3() {
       </details>
 
       {/* Cost Summary */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="card">
           <h3 className="text-sm font-semibold text-gray-500 mb-3">สรุปค่าใช้จ่าย</h3>
           <div className="space-y-2">

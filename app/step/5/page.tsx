@@ -59,7 +59,7 @@ export default function Step5() {
   })();
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={5} title="เปรียบเทียบกลยุทธ์" subtitle="Decision Comparison — Quick Sell vs Develop & Sell" />
 
       {/* Recommendation Banner */}
@@ -90,7 +90,7 @@ export default function Step5() {
       )}
 
       {/* Option Cards */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
         {/* Quick Sell */}
         <div className="card border-2 border-blue-200">
           <div className="flex items-center justify-between mb-4">

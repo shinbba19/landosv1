@@ -16,12 +16,25 @@ const STEPS = [
   { id: 6, label: "สรุปผล", sublabel: "Summary", icon: FileText },
 ];
 
-export default function StepNav() {
+interface Props {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export default function StepNav({ open = false, onClose }: Props) {
   const pathname = usePathname();
   const { projectName, currentStep } = useStore();
 
   return (
-    <aside className="no-print w-64 min-h-screen bg-brand-900 text-white flex flex-col fixed left-0 top-0 z-10">
+    <aside
+      className={clsx(
+        "no-print w-64 min-h-screen bg-brand-900 text-white flex flex-col fixed left-0 top-0 z-40 transition-transform duration-300",
+        // Mobile: hidden by default, slide in when open
+        open ? "translate-x-0" : "-translate-x-full",
+        // Desktop: always visible
+        "md:translate-x-0"
+      )}
+    >
       {/* Logo */}
       <div className="px-6 py-6 border-b border-brand-800">
         <div className="flex items-center gap-2 mb-1">
@@ -42,6 +55,7 @@ export default function StepNav() {
             <Link
               key={step.id}
               href={`/step/${step.id}`}
+              onClick={onClose}
               className={clsx(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm",
                 active

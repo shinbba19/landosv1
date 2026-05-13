@@ -34,7 +34,7 @@ export default function HomePage() {
       </div>
 
       {/* Headline */}
-      <h1 className="text-5xl font-bold text-center mb-4 leading-tight">
+      <h1 className="text-4xl md:text-5xl font-bold text-center mb-4 leading-tight">
         วิเคราะห์ที่ดิน<br />
         <span className="text-brand-400">อย่างมืออาชีพ</span>
       </h1>
@@ -46,7 +46,7 @@ export default function HomePage() {
       </p>
 
       {/* Features */}
-      <div className="flex gap-4 mb-12">
+      <div className="flex flex-col sm:flex-row gap-4 mb-12">
         {FEATURES.map(({ icon: Icon, label, sub }) => (
           <div key={label} className="flex flex-col items-center gap-2 bg-brand-800 border border-brand-700 rounded-2xl px-6 py-4 text-center w-36">
             <div className="w-10 h-10 bg-brand-700 rounded-xl flex items-center justify-center">
@@ -59,10 +59,10 @@ export default function HomePage() {
       </div>
 
       {/* CTAs */}
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 w-full max-w-xs sm:max-w-none">
         <button
           onClick={handleNew}
-          className="flex items-center gap-2 bg-brand-500 hover:bg-brand-400 text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all shadow-lg shadow-brand-900/50 hover:shadow-brand-500/30 hover:-translate-y-0.5"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-400 text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all shadow-lg shadow-brand-900/50 hover:shadow-brand-500/30 hover:-translate-y-0.5"
         >
           เริ่มวิเคราะห์ใหม่
           <ArrowRight size={20} />
@@ -80,7 +80,7 @@ export default function HomePage() {
       </div>
 
       {/* Steps preview */}
-      <div className="mt-16 flex items-center gap-2 text-brand-600 text-xs">
+      <div className="mt-16 hidden sm:flex items-center gap-2 text-brand-600 text-xs">
         {["ข้อมูลที่ดิน", "วิเคราะห์", "ต้นทุน", "การเงิน", "เปรียบเทียบ", "สรุปผล"].map((s, i) => (
           <div key={s} className="flex items-center gap-2">
             <span className="flex items-center gap-1">
