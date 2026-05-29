@@ -32,7 +32,8 @@ function CompareRow({ label, qsValue, dsValue, highlight }: {
 }
 
 export default function Step5() {
-  const { landInput, landAnalysis, devCost, financial, setStep } = useStore();
+  const { landInput, landAnalysis, devCost, financial, setStep, user } = useStore();
+  const isAdmin = user?.role === 'admin';
   const { lotCount, lotSizeSqWah, usableAreaSqWah } = landAnalysis;
 
   const qs = {
@@ -216,7 +217,7 @@ export default function Step5() {
         </div>
       </div>
 
-      <NavButtons prevStep={4} nextStep={6} onNext={() => { setStep(6); return true; }} nextLabel="ดูสรุปผล" />
+      <NavButtons prevStep={4} nextStep={6} onNext={isAdmin ? undefined : () => { setStep(6); return true; }} nextLabel="ดูสรุปผล" />
     </div>
   );
 }

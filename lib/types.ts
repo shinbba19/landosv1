@@ -65,6 +65,21 @@ export interface Financial {
 
 export type StepId = 1 | 2 | 3 | 4 | 5 | 6;
 
+export interface User {
+  role: 'admin' | 'landowner';
+  name: string;
+}
+
+export interface SavedProject {
+  id: string;
+  savedAt: string;
+  projectName: string;
+  landInput: LandInput;
+  landAnalysis: LandAnalysis;
+  devCost: DevCost;
+  financial: Financial;
+}
+
 export interface ProjectState {
   projectName: string;
   currentStep: StepId;
@@ -72,4 +87,6 @@ export interface ProjectState {
   landAnalysis: LandAnalysis;
   devCost: DevCost;
   financial: Financial;
+  user: User | null;
+  savedProjects: SavedProject[];
 }

@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ProjectState, StepId, LandInput, LandAnalysis, DevCost, Financial } from "./types";
+import type { ProjectState, StepId, LandInput, LandAnalysis, DevCost, Financial, User, SavedProject } from "./types";
 import { PRESETS } from "./calculations";
 
 const DEFAULT_LAND_INPUT: LandInput = {
@@ -42,17 +42,24 @@ interface Store extends ProjectState {
   updateDevCost: (data: Partial<DevCost>) => void;
   updateFinancial: (data: Partial<Financial>) => void;
   reset: () => void;
+  login: (role: User['role'], name: string) => void;
+  logout: () => void;
+  saveProject: () => string;
+  loadProject: (id: string) => void;
+  deleteProject: (id: string) => void;
 }
 
 export const useStore = create<Store>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       projectName: "โปรเจกต์ที่ดิน",
       currentStep: 1,
       landInput: DEFAULT_LAND_INPUT,
       landAnalysis: DEFAULT_LAND_ANALYSIS,
       devCost: DEFAULT_DEV_COST,
       financial: DEFAULT_FINANCIAL,
+      user: null,
+      savedProjects: [],
 
       setStep: (step) => set({ currentStep: step }),
       setProjectName: (name) => set({ projectName: name }),
@@ -73,6 +80,41 @@ export const useStore = create<Store>()(
           devCost: DEFAULT_DEV_COST,
           financial: DEFAULT_FINANCIAL,
         }),
+      login: (role, name) => set({ user: { role, name } }),
+      logout: () => set({ user: null }),
+
+      saveProject: () => {
+        const s = get();
+        const id = Date.now().toString();
+        const entry: SavedProject = {
+          id,
+          savedAt: new Date().toISOString(),
+          projectName: s.projectName,
+          landInput: s.landInput,
+          landAnalysis: s.landAnalysis,
+          devCost: s.devCost,
+          financial: s.financial,
+        };
+        set((s) => ({ savedProjects: [entry, ...s.savedProjects] }));
+        return id;
+      },
+
+      loadProject: (id) => {
+        const s = get();
+        const p = s.savedProjects.find((p) => p.id === id);
+        if (!p) return;
+        set({
+          projectName: p.projectName,
+          landInput: p.landInput,
+          landAnalysis: p.landAnalysis,
+          devCost: p.devCost,
+          financial: p.financial,
+          currentStep: 1,
+        });
+      },
+
+      deleteProject: (id) =>
+        set((s) => ({ savedProjects: s.savedProjects.filter((p) => p.id !== id) })),
     }),
     { name: "landos-project" }
   )

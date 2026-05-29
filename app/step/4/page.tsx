@@ -21,7 +21,8 @@ function StatCard({ label, value, sub, highlight = false }: { label: string; val
 }
 
 export default function Step4() {
-  const { landInput, landAnalysis, devCost, financial, updateFinancial, setStep } = useStore();
+  const { landInput, landAnalysis, devCost, financial, updateFinancial, setStep, user } = useStore();
+  const isAdmin = user?.role === 'admin';
   const { lotCount, lotSizeSqWah } = landAnalysis;
   const acquisitionCost = landInput.acquisitionCost || landInput.landPrice;
 
@@ -61,6 +62,7 @@ export default function Step4() {
       <StepHeader step={4} title="การวิเคราะห์การเงิน" subtitle="Financial Analysis — ผลตอบแทนและความเป็นไปได้" />
 
       {/* Input */}
+      <fieldset disabled={isAdmin}>
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ราคาขาย</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -91,6 +93,7 @@ export default function Step4() {
           </div>
         </div>
       </div>
+      </fieldset>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -185,7 +188,7 @@ export default function Step4() {
         </div>
       )}
 
-      <NavButtons prevStep={3} nextStep={5} onNext={() => { setStep(5); return true; }} />
+      <NavButtons prevStep={3} nextStep={5} onNext={isAdmin ? undefined : () => { setStep(5); return true; }} />
     </div>
   );
 }

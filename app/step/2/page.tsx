@@ -9,7 +9,8 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recha
 const COLORS = ["#16a34a", "#86efac", "#dcfce7"];
 
 export default function Step2() {
-  const { landInput, landAnalysis, updateLandAnalysis, setStep } = useStore();
+  const { landInput, landAnalysis, updateLandAnalysis, setStep, user } = useStore();
+  const isAdmin = user?.role === 'admin';
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function Step2() {
       )}
 
       {/* Parameters */}
+      <fieldset disabled={isAdmin}>
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ตัวแปรการวิเคราะห์</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -67,6 +69,7 @@ export default function Step2() {
           </div>
         </div>
       </div>
+      </fieldset>
 
       {/* Results */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -128,7 +131,7 @@ export default function Step2() {
         </div>
       </div>
 
-      <NavButtons prevStep={1} nextStep={3} onNext={() => { setStep(3); return true; }} />
+      <NavButtons prevStep={1} nextStep={3} onNext={isAdmin ? undefined : () => { setStep(3); return true; }} />
     </div>
   );
 }

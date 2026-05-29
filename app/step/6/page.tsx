@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useStore } from "@/lib/store";
 import { formatThb, formatArea, toSqWah } from "@/lib/calculations";
 import StepHeader from "@/components/StepHeader";
-import { Printer, RotateCcw } from "lucide-react";
+import { Printer, RotateCcw, Save, CheckCircle } from "lucide-react";
 import clsx from "clsx";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -25,7 +25,15 @@ function Row({ label, value, highlight }: { label: string; value: string | numbe
 }
 
 export default function Step6() {
-  const { projectName, landInput, landAnalysis, devCost, financial, reset } = useStore();
+  const { projectName, landInput, landAnalysis, devCost, financial, reset, user, saveProject } = useStore();
+  const isAdmin = user?.role === 'admin';
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    saveProject();
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
   const acquisitionCost = landInput.acquisitionCost || landInput.landPrice;
 
@@ -50,16 +58,33 @@ export default function Step6() {
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <StepHeader step={6} title="สรุปผลการวิเคราะห์" subtitle="Executive Summary Report" className="mb-0" />
-        <div className="flex gap-2 no-print">
+        <div className="flex gap-2 no-print flex-wrap">
+          {!isAdmin && (
+            <button
+              onClick={handleSave}
+              disabled={saved}
+              className={clsx(
+                "flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl transition-all border",
+                saved
+                  ? "bg-green-50 border-green-200 text-green-700"
+                  : "bg-brand-600 hover:bg-brand-700 text-white border-transparent"
+              )}
+            >
+              {saved ? <CheckCircle size={15} /> : <Save size={15} />}
+              {saved ? "บันทึกแล้ว!" : "บันทึกโปรเจกต์"}
+            </button>
+          )}
           <button onClick={() => window.print()} className="btn-secondary flex items-center gap-2 text-sm">
             <Printer size={15} />พิมพ์ / PDF
           </button>
-          <button
-            onClick={() => { if (confirm("ล้างข้อมูลทั้งหมด?")) reset(); }}
-            className="btn-secondary flex items-center gap-2 text-sm text-red-600 border-red-200 hover:bg-red-50"
-          >
-            <RotateCcw size={15} />เริ่มใหม่
-          </button>
+          {!isAdmin && (
+            <button
+              onClick={() => { if (confirm("ล้างข้อมูลทั้งหมด?")) reset(); }}
+              className="btn-secondary flex items-center gap-2 text-sm text-red-600 border-red-200 hover:bg-red-50"
+            >
+              <RotateCcw size={15} />เริ่มใหม่
+            </button>
+          )}
         </div>
       </div>
 
