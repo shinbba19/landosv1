@@ -32,9 +32,8 @@ function CompareRow({ label, qsValue, dsValue, highlight }: {
 }
 
 export default function Step5() {
-  const { landInput, landAnalysis, devCost, financial, setStep, user } = useStore();
-  const isAdmin = user?.role === 'admin';
-  const { lotCount, lotSizeSqWah, usableAreaSqWah } = landAnalysis;
+  const { landInput, landAnalysis, devCost, financial, setStep } = useStore();
+  const { lotCount, lotSizeSqWah, usableAreaSqWah, totalSqWah } = landAnalysis;
 
   const qs = {
     capital: landInput.acquisitionCost || landInput.landPrice,
@@ -193,12 +192,15 @@ export default function Step5() {
         </div>
         <CompareRow label="เงินลงทุนที่ต้องการ" qsValue={formatThb(qs.capital)} dsValue={formatThb(ds.capital)} />
         <CompareRow label="รายได้รวม" qsValue={formatThb(financial.quickSellTotal || 0)} dsValue={formatThb(financial.grossRevenue)} />
-        <CompareRow label="กำไรโดยประมาณ" qsValue={formatThb(qs.profit)} dsValue={formatThb(ds.profit)} highlight />
+        <CompareRow label="ต้นทุนที่ดิน / โครงการ" qsValue={`−${formatThb(qs.capital)}`} dsValue={`−${formatThb(ds.capital)}`} />
+        <CompareRow label="ภาษี 5%" qsValue={`−${formatThb(financial.quickSellTax)}`} dsValue={`−${formatThb(financial.developTax)}`} />
+        <CompareRow label="ค่านายหน้า 3%" qsValue={`−${formatThb(financial.quickSellCommission)}`} dsValue={`−${formatThb(financial.developCommission)}`} />
+        <CompareRow label="กำไรสุทธิ" qsValue={formatThb(qs.profit)} dsValue={formatThb(ds.profit)} highlight />
         <CompareRow label="ROI" qsValue={`${qs.roi.toFixed(1)}%`} dsValue={`${ds.roi.toFixed(1)}%`} highlight />
         <CompareRow label="ระยะเวลา" qsValue={qs.timeline} dsValue={ds.timeline} />
         <CompareRow label="ระดับความเสี่ยง" qsValue={<RiskBadge level={qs.risk} />} dsValue={<RiskBadge level={ds.risk} />} />
         <CompareRow label="จำนวนแปลง" qsValue="—" dsValue={`${lotCount} แปลง`} />
-        <CompareRow label="พื้นที่ขายได้" qsValue={formatArea(usableAreaSqWah)} dsValue={formatArea(lotCount * lotSizeSqWah)} />
+        <CompareRow label="พื้นที่ขายได้" qsValue={formatArea(totalSqWah)} dsValue={formatArea(lotCount * lotSizeSqWah)} />
       </div>
 
       {/* Risk Warning */}
@@ -217,7 +219,7 @@ export default function Step5() {
         </div>
       </div>
 
-      <NavButtons prevStep={4} nextStep={6} onNext={isAdmin ? undefined : () => { setStep(6); return true; }} nextLabel="ดูสรุปผล" />
+      <NavButtons prevStep={4} nextStep={6} onNext={() => { setStep(6); return true; }} nextLabel="ดูสรุปผล" />
     </div>
   );
 }

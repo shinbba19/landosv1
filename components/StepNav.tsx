@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
 import clsx from "clsx";
 import {
-  MapPin, BarChart2, Hammer, TrendingUp, GitCompare, FileText, Home, LogOut, User, LayoutDashboard,
+  MapPin, BarChart2, Hammer, TrendingUp, GitCompare, FileText, Home, LayoutDashboard,
 } from "lucide-react";
 
 const STEPS = [
@@ -23,13 +23,7 @@ interface Props {
 
 export default function StepNav({ open = false, onClose }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { projectName, currentStep, user, logout } = useStore();
-
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-  };
+  const { projectName, currentStep } = useStore();
 
   return (
     <aside
@@ -39,9 +33,9 @@ export default function StepNav({ open = false, onClose }: Props) {
         "md:translate-x-0"
       )}
     >
-      {/* Logo — links to role home */}
+      {/* Logo */}
       <Link
-        href={user?.role === 'admin' ? '/admin' : '/dashboard'}
+        href="/dashboard"
         onClick={onClose}
         className="px-6 py-6 border-b border-brand-800 hover:bg-brand-800 transition-colors block"
       >
@@ -53,29 +47,27 @@ export default function StepNav({ open = false, onClose }: Props) {
         <p className="text-xs text-brand-500 mt-0.5">ระบบวิเคราะห์ที่ดิน</p>
       </Link>
 
-      {/* Role dashboard link */}
-      {user && (
-        <div className="px-3 pt-3">
-          <Link
-            href={user.role === 'admin' ? '/admin' : '/dashboard'}
-            onClick={onClose}
-            className={clsx(
-              "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-semibold",
-              (pathname === '/admin' || pathname === '/dashboard')
-                ? "bg-brand-600 text-white"
-                : "text-brand-200 hover:bg-brand-800"
-            )}
-          >
-            <div className={clsx(
-              "w-7 h-7 rounded-full flex items-center justify-center shrink-0",
-              (pathname === '/admin' || pathname === '/dashboard') ? "bg-white text-brand-700" : "bg-brand-800 text-brand-500"
-            )}>
-              <LayoutDashboard size={14} />
-            </div>
-            <span>{user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}</span>
-          </Link>
-        </div>
-      )}
+      {/* Dashboard link */}
+      <div className="px-3 pt-3">
+        <Link
+          href="/dashboard"
+          onClick={onClose}
+          className={clsx(
+            "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-semibold",
+            pathname === '/dashboard'
+              ? "bg-brand-600 text-white"
+              : "text-brand-200 hover:bg-brand-800"
+          )}
+        >
+          <div className={clsx(
+            "w-7 h-7 rounded-full flex items-center justify-center shrink-0",
+            pathname === '/dashboard' ? "bg-white text-brand-700" : "bg-brand-800 text-brand-500"
+          )}>
+            <LayoutDashboard size={14} />
+          </div>
+          <span>My Dashboard</span>
+        </Link>
+      </div>
 
       {/* Steps */}
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -133,26 +125,6 @@ export default function StepNav({ open = false, onClose }: Props) {
           />
         </div>
       </div>
-
-      {/* User info + logout */}
-      {user && (
-        <div className="px-4 py-3 border-t border-brand-800 flex items-center gap-3">
-          <div className="w-8 h-8 bg-brand-800 rounded-full flex items-center justify-center shrink-0">
-            <User size={14} className="text-brand-500" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-white truncate">{user.name}</p>
-            <p className="text-xs text-brand-500 capitalize">{user.role}</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            aria-label="ออกจากระบบ"
-            className="text-brand-500 hover:text-white p-1 rounded-lg hover:bg-brand-800 transition-colors"
-          >
-            <LogOut size={15} />
-          </button>
-        </div>
-      )}
     </aside>
   );
 }

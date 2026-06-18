@@ -61,14 +61,14 @@ export interface Financial {
   costPerSqWah: number;
   quickSellProfit: number;
   quickSellRoi: number;
+  // computed — tax & commission
+  quickSellTax: number;
+  quickSellCommission: number;
+  developTax: number;
+  developCommission: number;
 }
 
 export type StepId = 1 | 2 | 3 | 4 | 5 | 6;
-
-export interface User {
-  role: 'admin' | 'landowner';
-  name: string;
-}
 
 export interface SavedProject {
   id: string;
@@ -87,6 +87,5 @@ export interface ProjectState {
   landAnalysis: LandAnalysis;
   devCost: DevCost;
   financial: Financial;
-  user: User | null;
   savedProjects: SavedProject[];
 }

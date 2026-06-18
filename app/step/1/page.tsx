@@ -22,8 +22,7 @@ const SHAPE_OPTIONS = [
 ];
 
 export default function Step1() {
-  const { landInput, updateLandInput, setStep, projectName, setProjectName, user } = useStore();
-  const isAdmin = user?.role === 'admin';
+  const { landInput, updateLandInput, setStep, projectName, setProjectName } = useStore();
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
   const totalSqm = totalSqWah * 4;
 
@@ -33,7 +32,7 @@ export default function Step1() {
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={1} title="ข้อมูลที่ดิน" subtitle="Land Input — กรอกข้อมูลพื้นฐานของที่ดิน" />
 
-      <fieldset disabled={isAdmin}>
+      <div>
       {/* Project Name */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ชื่อโปรเจกต์</h2>
@@ -186,9 +185,9 @@ export default function Step1() {
           </div>
         </div>
       </div>
-      </fieldset>
+      </div>
 
-      <NavButtons nextStep={2} onNext={isAdmin ? undefined : () => { setStep(2); return true; }} />
+      <NavButtons nextStep={2} onNext={() => { setStep(2); return true; }} />
     </div>
   );
 }

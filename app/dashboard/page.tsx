@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { formatArea, toSqWah } from "@/lib/calculations";
@@ -8,14 +7,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, savedProjects, deleteProject, reset } = useStore();
-
-  useEffect(() => {
-    if (user && user.role !== 'landowner') router.replace('/admin');
-    if (!user) router.replace('/login');
-  }, [user, router]);
-
-  if (!user || user.role !== 'landowner') return null;
+  const { savedProjects, deleteProject, reset } = useStore();
 
   const handleNew = () => {
     reset();
@@ -32,7 +24,6 @@ export default function DashboardPage() {
             My Dashboard
           </div>
           <h1 className="text-2xl font-bold text-gray-900">โปรเจกต์ของฉัน</h1>
-          <p className="text-gray-500 text-sm mt-1">สวัสดี, {user.name}</p>
         </div>
         <button onClick={handleNew} className="flex items-center gap-2 btn-primary text-sm">
           <Plus size={15} />โปรเจกต์ใหม่

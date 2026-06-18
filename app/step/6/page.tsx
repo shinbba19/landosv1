@@ -25,8 +25,7 @@ function Row({ label, value, highlight }: { label: string; value: string | numbe
 }
 
 export default function Step6() {
-  const { projectName, landInput, landAnalysis, devCost, financial, reset, user, saveProject } = useStore();
-  const isAdmin = user?.role === 'admin';
+  const { projectName, landInput, landAnalysis, devCost, financial, reset, saveProject } = useStore();
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -59,32 +58,28 @@ export default function Step6() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <StepHeader step={6} title="สรุปผลการวิเคราะห์" subtitle="Executive Summary Report" className="mb-0" />
         <div className="flex gap-2 no-print flex-wrap">
-          {!isAdmin && (
-            <button
-              onClick={handleSave}
-              disabled={saved}
-              className={clsx(
-                "flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl transition-all border",
-                saved
-                  ? "bg-green-50 border-green-200 text-green-700"
-                  : "bg-brand-600 hover:bg-brand-700 text-white border-transparent"
-              )}
-            >
-              {saved ? <CheckCircle size={15} /> : <Save size={15} />}
-              {saved ? "บันทึกแล้ว!" : "บันทึกโปรเจกต์"}
-            </button>
-          )}
+          <button
+            onClick={handleSave}
+            disabled={saved}
+            className={clsx(
+              "flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl transition-all border",
+              saved
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-brand-600 hover:bg-brand-700 text-white border-transparent"
+            )}
+          >
+            {saved ? <CheckCircle size={15} /> : <Save size={15} />}
+            {saved ? "บันทึกแล้ว!" : "บันทึกโปรเจกต์"}
+          </button>
           <button onClick={() => window.print()} className="btn-secondary flex items-center gap-2 text-sm">
             <Printer size={15} />พิมพ์ / PDF
           </button>
-          {!isAdmin && (
-            <button
-              onClick={() => { if (confirm("ล้างข้อมูลทั้งหมด?")) reset(); }}
-              className="btn-secondary flex items-center gap-2 text-sm text-red-600 border-red-200 hover:bg-red-50"
-            >
-              <RotateCcw size={15} />เริ่มใหม่
-            </button>
-          )}
+          <button
+            onClick={() => { if (confirm("ล้างข้อมูลทั้งหมด?")) reset(); }}
+            className="btn-secondary flex items-center gap-2 text-sm text-red-600 border-red-200 hover:bg-red-50"
+          >
+            <RotateCcw size={15} />เริ่มใหม่
+          </button>
         </div>
       </div>
 
@@ -142,9 +137,17 @@ export default function Step6() {
           <Section title="การวิเคราะห์การเงิน (Develop & Sell)">
             <Row label="ราคาขายต่อ ตร.วา" value={formatThb(financial.sellingPricePerSqWah)} />
             <Row label="รายได้รวมโดยประมาณ" value={formatThb(financial.grossRevenue)} />
-            <Row label="กำไรขั้นต้น" value={formatThb(financial.grossProfit)} />
+            <Row label="ภาษี 5% (ราคาขายจริง)" value={`−${formatThb(financial.developTax)}`} />
+            <Row label="ค่านายหน้า 3%" value={`−${formatThb(financial.developCommission)}`} />
+            <Row label="กำไรสุทธิ" value={formatThb(financial.grossProfit)} />
             <Row label="Gross Margin" value={`${financial.grossMargin.toFixed(1)}%`} />
             <Row label="ROI" value={`${financial.roi.toFixed(1)}%`} highlight />
+          </Section>
+          <Section title="Quick Sell">
+            <Row label="ราคาขายยก" value={formatThb(financial.quickSellTotal)} />
+            <Row label="ภาษี 5% (ราคาประเมิน)" value={`−${formatThb(financial.quickSellTax)}`} />
+            <Row label="ค่านายหน้า 3%" value={`−${formatThb(financial.quickSellCommission)}`} />
+            <Row label="กำไรสุทธิ" value={formatThb(financial.quickSellProfit)} highlight />
           </Section>
         </div>
       </div>

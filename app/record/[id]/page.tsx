@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { formatThb, formatArea, toSqWah } from "@/lib/calculations";
@@ -41,13 +40,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function RecordPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { user, savedProjects } = useStore();
-
-  useEffect(() => {
-    if (!user) router.replace('/login');
-  }, [user, router]);
-
-  if (!user) return null;
+  const { savedProjects } = useStore();
 
   const record = savedProjects.find((p) => p.id === id);
 
@@ -75,7 +68,7 @@ export default function RecordPage() {
     return "neutral";
   })();
 
-  const backHref = user.role === 'admin' ? '/admin' : '/dashboard';
+  const backHref = '/dashboard';
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
@@ -216,11 +209,19 @@ export default function RecordPage() {
             <Row label="ค่าเบ็ดเตล็ด" value={formatThb(devCost.miscCost)} />
             <Row label="รวมต้นทุนโครงสร้างพื้นฐาน" value={formatThb(devCost.totalInfraCost)} highlight />
           </Section>
-          <Section title="การวิเคราะห์การเงิน">
+          <Section title="Develop & Sell">
             <Row label="ราคาขายต่อ ตร.วา" value={formatThb(financial.sellingPricePerSqWah)} />
             <Row label="รายได้รวม" value={formatThb(financial.grossRevenue)} />
-            <Row label="กำไรขั้นต้น" value={formatThb(financial.grossProfit)} />
+            <Row label="ภาษี 5% (ราคาขายจริง)" value={`−${formatThb(financial.developTax)}`} />
+            <Row label="ค่านายหน้า 3%" value={`−${formatThb(financial.developCommission)}`} />
+            <Row label="กำไรสุทธิ" value={formatThb(financial.grossProfit)} />
             <Row label="ROI" value={`${financial.roi.toFixed(1)}%`} highlight />
+          </Section>
+          <Section title="Quick Sell">
+            <Row label="ราคาขายยก" value={formatThb(financial.quickSellTotal)} />
+            <Row label="ภาษี 5% (ราคาประเมิน)" value={`−${formatThb(financial.quickSellTax)}`} />
+            <Row label="ค่านายหน้า 3%" value={`−${formatThb(financial.quickSellCommission)}`} />
+            <Row label="กำไรสุทธิ" value={formatThb(financial.quickSellProfit)} highlight />
           </Section>
         </div>
       </div>

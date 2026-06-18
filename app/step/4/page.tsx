@@ -21,8 +21,7 @@ function StatCard({ label, value, sub, highlight = false }: { label: string; val
 }
 
 export default function Step4() {
-  const { landInput, landAnalysis, devCost, financial, updateFinancial, setStep, user } = useStore();
-  const isAdmin = user?.role === 'admin';
+  const { landInput, landAnalysis, devCost, financial, updateFinancial, setStep } = useStore();
   const { lotCount, lotSizeSqWah } = landAnalysis;
   const acquisitionCost = landInput.acquisitionCost || landInput.landPrice;
 
@@ -35,10 +34,11 @@ export default function Step4() {
       lotSizeSqWah,
       financial.sellingPricePerSqWah,
       financial.quickSellTotal,
+      landInput.appraisalValue,
     );
     updateFinancial(result);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [financial.sellingPricePerSqWah, financial.quickSellTotal, devCost.totalInfraCost, lotCount, lotSizeSqWah, acquisitionCost]);
+  }, [financial.sellingPricePerSqWah, financial.quickSellTotal, devCost.totalInfraCost, lotCount, lotSizeSqWah, acquisitionCost, landInput.appraisalValue]);
 
   // Waterfall chart data
   const waterfallData = [
@@ -62,7 +62,7 @@ export default function Step4() {
       <StepHeader step={4} title="การวิเคราะห์การเงิน" subtitle="Financial Analysis — ผลตอบแทนและความเป็นไปได้" />
 
       {/* Input */}
-      <fieldset disabled={isAdmin}>
+      <div>
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ราคาขาย</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -93,19 +93,61 @@ export default function Step4() {
           </div>
         </div>
       </div>
-      </fieldset>
+      </div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard label="ต้นทุนโครงการรวม" value={formatThb(financial.totalProjectCost)} sub="Land + Infrastructure" />
         <StatCard label="รายได้รวมโดยประมาณ" value={formatThb(financial.grossRevenue)} sub={`${lotCount} แปลง × ${lotSizeSqWah} ตร.วา`} />
-        <StatCard label="กำไรขั้นต้น" value={formatThb(financial.grossProfit)}
+        <StatCard label="กำไรสุทธิ (หลังภาษี+นายหน้า)" value={formatThb(financial.grossProfit)}
           sub={`Gross Margin ${financial.grossMargin.toFixed(1)}%`}
           highlight={financial.grossProfit > 0} />
         <StatCard label="ROI" value={`${financial.roi.toFixed(1)}%`}
           sub="Return on Investment"
           highlight={financial.roi > 0} />
       </div>
+
+      {/* Tax & commission breakdown */}
+      {(financial.grossRevenue > 0 || financial.quickSellTotal > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-500 mb-3">สรุป Quick Sell</h3>
+            <div className="space-y-1.5 text-sm">
+              {[
+                ["ราคาขายยก", formatThb(financial.quickSellTotal)],
+                ["หัก ต้นทุนที่ดิน", `−${formatThb(acquisitionCost)}`],
+                ["หัก ภาษี 5% (ราคาประเมิน)", `−${formatThb(financial.quickSellTax)}`],
+                ["หัก ค่านายหน้า 3%", `−${formatThb(financial.quickSellCommission)}`],
+              ].map(([l, v]) => (
+                <div key={l} className="flex justify-between text-gray-600">
+                  <span>{l}</span><span className="font-medium">{v}</span>
+                </div>
+              ))}
+              <div className="flex justify-between font-bold pt-2 border-t text-brand-700">
+                <span>กำไรสุทธิ</span><span>{formatThb(financial.quickSellProfit)}</span>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-500 mb-3">สรุป Develop &amp; Sell</h3>
+            <div className="space-y-1.5 text-sm">
+              {[
+                ["รายได้รวม", formatThb(financial.grossRevenue)],
+                ["หัก ต้นทุนโครงการ", `−${formatThb(financial.totalProjectCost)}`],
+                ["หัก ภาษี 5% (ราคาขายจริง)", `−${formatThb(financial.developTax)}`],
+                ["หัก ค่านายหน้า 3%", `−${formatThb(financial.developCommission)}`],
+              ].map(([l, v]) => (
+                <div key={l} className="flex justify-between text-gray-600">
+                  <span>{l}</span><span className="font-medium">{v}</span>
+                </div>
+              ))}
+              <div className="flex justify-between font-bold pt-2 border-t text-brand-700">
+                <span>กำไรสุทธิ</span><span>{formatThb(financial.grossProfit)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Waterfall */}
@@ -188,7 +230,7 @@ export default function Step4() {
         </div>
       )}
 
-      <NavButtons prevStep={3} nextStep={5} onNext={isAdmin ? undefined : () => { setStep(5); return true; }} />
+      <NavButtons prevStep={3} nextStep={5} onNext={() => { setStep(5); return true; }} />
     </div>
   );
 }

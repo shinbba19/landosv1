@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { calcLandAnalysis, formatArea, formatThb, toSqWah } from "@/lib/calculations";
 import StepHeader from "@/components/StepHeader";
@@ -9,9 +9,28 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recha
 const COLORS = ["#16a34a", "#86efac", "#dcfce7"];
 
 export default function Step2() {
-  const { landInput, landAnalysis, updateLandAnalysis, setStep, user } = useStore();
-  const isAdmin = user?.role === 'admin';
+  const { landInput, landAnalysis, updateLandAnalysis, setStep } = useStore();
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
+  const [roadMode, setRoadMode] = useState<'pct' | 'sqwah'>('pct');
+  const [sqwahInput, setSqwahInput] = useState('');
+
+  const roadSqWah = totalSqWah > 0
+    ? Math.round((landAnalysis.roadDeductionPct / 100) * totalSqWah)
+    : 0;
+
+  const switchMode = (mode: 'pct' | 'sqwah') => {
+    if (mode === 'sqwah') setSqwahInput(roadSqWah > 0 ? String(roadSqWah) : '');
+    setRoadMode(mode);
+  };
+
+  const handleRoadSqWah = (val: string) => {
+    setSqwahInput(val);
+    const sqw = parseFloat(val) || 0;
+    if (totalSqWah > 0 && sqw >= 0) {
+      const pct = parseFloat(Math.min(100, (sqw / totalSqWah) * 100).toFixed(1));
+      updateLandAnalysis({ roadDeductionPct: pct });
+    }
+  };
 
   useEffect(() => {
     if (totalSqWah === 0) return;
@@ -39,37 +58,77 @@ export default function Step2() {
       )}
 
       {/* Parameters */}
-      <fieldset disabled={isAdmin}>
+      <div>
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ตัวแปรการวิเคราะห์</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="label">
-              สัดส่วนหักถนน / โครงสร้างพื้นฐาน: <span className="font-bold text-brand-600">{landAnalysis.roadDeductionPct}%</span>
-            </label>
-            <input
-              type="range" min={5} max={30} step={1}
-              className="w-full accent-brand-600"
-              value={landAnalysis.roadDeductionPct}
-              onChange={(e) => updateLandAnalysis({ roadDeductionPct: parseInt(e.target.value) })}
-            />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>5% (ต่ำมาก)</span><span>15% (มาตรฐาน)</span><span>30% (สูง)</span>
+            <label className="label">สัดส่วนหักถนน / โครงสร้างพื้นฐาน</label>
+            {/* Mode toggle */}
+            <div className="flex rounded-lg border border-gray-200 overflow-hidden mb-2 w-fit">
+              <button
+                type="button"
+                onClick={() => switchMode('pct')}
+                className={`px-3 py-1.5 text-xs font-semibold transition-colors ${roadMode === 'pct' ? 'bg-brand-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              >
+                %
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode('sqwah')}
+                className={`px-3 py-1.5 text-xs font-semibold transition-colors ${roadMode === 'sqwah' ? 'bg-brand-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              >
+                ตร.วา
+              </button>
             </div>
+            {roadMode === 'pct' ? (
+              <div className="relative">
+                <input
+                  type="number" min={0} max={100} step={0.5}
+                  className="input-field pr-8"
+                  value={landAnalysis.roadDeductionPct}
+                  onChange={(e) => {
+                    const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+                    updateLandAnalysis({ roadDeductionPct: v });
+                  }}
+                  placeholder="15"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">%</span>
+                {totalSqWah > 0 && <p className="text-xs text-gray-400 mt-1">≈ {roadSqWah.toLocaleString()} ตร.วา</p>}
+              </div>
+            ) : (
+              <div className="relative">
+                <input
+                  type="number" min={0}
+                  className="input-field pr-12"
+                  value={sqwahInput}
+                  onChange={(e) => handleRoadSqWah(e.target.value)}
+                  placeholder="เช่น 600"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">ตร.วา</span>
+                {totalSqWah > 0 && sqwahInput !== '' && (
+                  <p className="text-xs text-gray-400 mt-1">≈ {landAnalysis.roadDeductionPct.toFixed(1)}% ของพื้นที่ทั้งหมด</p>
+                )}
+              </div>
+            )}
           </div>
           <div>
-            <label className="label">ขนาดแปลงมาตรฐาน (ตร.วา)</label>
-            <input
-              type="number" min={20} max={500}
-              className="input-field"
-              value={landAnalysis.lotSizeSqWah}
-              onChange={(e) => updateLandAnalysis({ lotSizeSqWah: parseFloat(e.target.value) || 50 })}
-            />
+            <label className="label">ขนาดแปลงมาตรฐาน</label>
+            <div className="relative">
+              <input
+                type="number" min={1}
+                className="input-field pr-12"
+                value={landAnalysis.lotSizeSqWah}
+                onChange={(e) => updateLandAnalysis({ lotSizeSqWah: parseFloat(e.target.value) || 1 })}
+                placeholder="50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">ตร.วา</span>
+            </div>
             <p className="text-xs text-gray-400 mt-1">= {(landAnalysis.lotSizeSqWah * 4).toLocaleString()} ตร.ม.</p>
           </div>
         </div>
       </div>
-      </fieldset>
+      </div>
 
       {/* Results */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -131,7 +190,7 @@ export default function Step2() {
         </div>
       </div>
 
-      <NavButtons prevStep={1} nextStep={3} onNext={isAdmin ? undefined : () => { setStep(3); return true; }} />
+      <NavButtons prevStep={1} nextStep={3} onNext={() => { setStep(3); return true; }} />
     </div>
   );
 }

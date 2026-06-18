@@ -16,8 +16,7 @@ const PRESET_LABELS = {
 };
 
 export default function Step3() {
-  const { devCost, landAnalysis, updateDevCost, setStep, user } = useStore();
-  const isAdmin = user?.role === 'admin';
+  const { devCost, landAnalysis, updateDevCost, setStep } = useStore();
   const lotCount = landAnalysis.lotCount;
 
   const applyPreset = (preset: "basic" | "standard" | "premium") => {
@@ -50,7 +49,7 @@ export default function Step3() {
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <StepHeader step={3} title="ต้นทุนพัฒนา" subtitle="Development Cost — ประมาณการค่าก่อสร้างโครงสร้างพื้นฐาน" />
 
-      <fieldset disabled={isAdmin}>
+      <div>
       {/* Presets */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">เลือก Preset</h2>
@@ -153,7 +152,7 @@ export default function Step3() {
           ))}
         </div>
       </details>
-      </fieldset>
+      </div>
 
       {/* Cost Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -198,7 +197,7 @@ export default function Step3() {
         </div>
       </div>
 
-      <NavButtons prevStep={2} nextStep={4} onNext={isAdmin ? undefined : () => { setStep(4); return true; }} />
+      <NavButtons prevStep={2} nextStep={4} onNext={() => { setStep(4); return true; }} />
     </div>
   );
 }

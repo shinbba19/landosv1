@@ -77,17 +77,30 @@ export function calcFinancial(
   lotCount: number,
   lotSizeSqWah: number,
   sellingPricePerSqWah: number,
-  quickSellTotal: number
+  quickSellTotal: number,
+  appraisalValue: number
 ): Omit<Financial, "sellingPricePerSqWah" | "quickSellTotal"> {
   const totalProjectCost = acquisitionCost + totalInfraCost;
   const grossRevenue = lotCount * lotSizeSqWah * sellingPricePerSqWah;
-  const grossProfit = grossRevenue - totalProjectCost;
-  const grossMargin = grossRevenue ? (grossProfit / grossRevenue) * 100 : 0;
-  const roi = totalProjectCost ? (grossProfit / totalProjectCost) * 100 : 0;
   const costPerSqWah = lotCount && lotSizeSqWah ? totalProjectCost / (lotCount * lotSizeSqWah) : 0;
-  const quickSellProfit = quickSellTotal - acquisitionCost;
-  const quickSellRoi = acquisitionCost ? (quickSellProfit / acquisitionCost) * 100 : 0;
-  return { totalProjectCost, grossRevenue, grossProfit, grossMargin, roi, costPerSqWah, quickSellProfit, quickSellRoi };
+
+  // Tax & commission
+  const quickSellTax        = appraisalValue * 0.05;
+  const quickSellCommission = quickSellTotal * 0.03;
+  const developTax          = grossRevenue * 0.05;
+  const developCommission   = grossRevenue * 0.03;
+
+  const grossProfit  = grossRevenue - totalProjectCost - developTax - developCommission;
+  const grossMargin  = grossRevenue ? (grossProfit / grossRevenue) * 100 : 0;
+  const roi          = totalProjectCost ? (grossProfit / totalProjectCost) * 100 : 0;
+  const quickSellProfit = quickSellTotal - acquisitionCost - quickSellTax - quickSellCommission;
+  const quickSellRoi    = acquisitionCost ? (quickSellProfit / acquisitionCost) * 100 : 0;
+
+  return {
+    totalProjectCost, grossRevenue, grossProfit, grossMargin, roi, costPerSqWah,
+    quickSellProfit, quickSellRoi,
+    quickSellTax, quickSellCommission, developTax, developCommission,
+  };
 }
 
 export const PRESETS = {

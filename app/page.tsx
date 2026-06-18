@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { toSqWah, formatThb, formatArea } from "@/lib/calculations";
@@ -16,23 +15,17 @@ const STEP_LABELS = ["ข้อมูลที่ดิน", "วิเครา
 
 export default function HomePage() {
   const router = useRouter();
-  const { reset, landInput, landAnalysis, financial, currentStep, user, projectName, savedProjects, loadProject, deleteProject } = useStore();
-
-  useEffect(() => {
-    if (!user) router.replace("/login");
-  }, [user, router]);
+  const { reset, landInput, landAnalysis, financial, currentStep, projectName, savedProjects, deleteProject } = useStore();
 
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
   const hasData = totalSqWah > 0;
-
-  if (!user) return null;
 
   const handleNew = () => {
     reset();
     router.push("/step/1");
   };
 
-  // Reusable saved projects list shown in both states
+  // Saved projects list — shared between both views
   const SavedList = savedProjects.length > 0 ? (
     <div className="w-full max-w-lg mt-10">
       <div className="flex items-center gap-2 mb-4">
@@ -54,13 +47,12 @@ export default function HomePage() {
                   {p.financial.roi > 0 && ` · ROI ${p.financial.roi.toFixed(1)}%`}
                 </p>
               </div>
-              <button
-                onClick={() => loadProject(p.id)}
+              <Link
+                href={`/record/${p.id}`}
                 className="flex items-center gap-1.5 text-xs font-semibold text-brand-500 hover:text-white bg-brand-900 hover:bg-brand-700 border border-brand-700 rounded-lg px-3 py-1.5 transition-colors shrink-0"
               >
-                <ArrowRight size={12} />
-                โหลด
-              </button>
+                ดูข้อมูล <ArrowRight size={12} />
+              </Link>
               <button
                 onClick={() => { if (confirm(`ลบ "${p.projectName}"?`)) deleteProject(p.id); }}
                 className="text-brand-700 hover:text-red-400 p-1.5 rounded-lg hover:bg-brand-900 transition-colors shrink-0"
@@ -86,10 +78,8 @@ export default function HomePage() {
           LANDOS V1
         </div>
 
-        <p className="text-brand-500 text-sm mb-2">สวัสดี, {user.name}</p>
         <h1 className="text-3xl font-bold text-center mb-8">โปรเจกต์ของคุณ</h1>
 
-        {/* Project card */}
         <div className="w-full max-w-lg bg-brand-800 border border-brand-700 rounded-2xl p-6 mb-6">
           <div className="mb-4">
             <p className="text-xs text-brand-500 uppercase tracking-wider mb-1">โปรเจกต์</p>
@@ -153,7 +143,7 @@ export default function HomePage() {
     );
   }
 
-  // No current project — show onboarding hero + saved projects
+  // No current project — onboarding
   return (
     <div className="min-h-screen bg-brand-900 flex flex-col items-center justify-center px-6 py-12 text-white">
       <div className="mb-8 flex items-center gap-2 bg-brand-800 border border-brand-700 rounded-full px-4 py-1.5 text-xs font-semibold text-brand-500 uppercase tracking-widest">
@@ -204,7 +194,6 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* Saved projects — always visible even when no current project */}
       {SavedList}
 
       <p className="mt-8 text-brand-700 text-xs text-center max-w-sm">

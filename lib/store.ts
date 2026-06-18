@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ProjectState, StepId, LandInput, LandAnalysis, DevCost, Financial, User, SavedProject } from "./types";
+import type { ProjectState, StepId, LandInput, LandAnalysis, DevCost, Financial, SavedProject } from "./types";
 import { PRESETS } from "./calculations";
 
 const DEFAULT_LAND_INPUT: LandInput = {
@@ -32,6 +32,7 @@ const DEFAULT_FINANCIAL: Financial = {
   totalProjectCost: 0, grossRevenue: 0, grossProfit: 0,
   grossMargin: 0, roi: 0, costPerSqWah: 0,
   quickSellProfit: 0, quickSellRoi: 0,
+  quickSellTax: 0, quickSellCommission: 0, developTax: 0, developCommission: 0,
 };
 
 interface Store extends ProjectState {
@@ -42,8 +43,6 @@ interface Store extends ProjectState {
   updateDevCost: (data: Partial<DevCost>) => void;
   updateFinancial: (data: Partial<Financial>) => void;
   reset: () => void;
-  login: (role: User['role'], name: string) => void;
-  logout: () => void;
   saveProject: () => string;
   loadProject: (id: string) => void;
   deleteProject: (id: string) => void;
@@ -58,7 +57,6 @@ export const useStore = create<Store>()(
       landAnalysis: DEFAULT_LAND_ANALYSIS,
       devCost: DEFAULT_DEV_COST,
       financial: DEFAULT_FINANCIAL,
-      user: null,
       savedProjects: [],
 
       setStep: (step) => set({ currentStep: step }),
@@ -80,9 +78,6 @@ export const useStore = create<Store>()(
           devCost: DEFAULT_DEV_COST,
           financial: DEFAULT_FINANCIAL,
         }),
-      login: (role, name) => set({ user: { role, name } }),
-      logout: () => set({ user: null }),
-
       saveProject: () => {
         const s = get();
         const id = Date.now().toString();
