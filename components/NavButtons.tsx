@@ -18,7 +18,7 @@ export default function NavButtons({ prevStep, nextStep, onNext, nextLabel = "à¸
   };
 
   return (
-    <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
+    <div className="flex justify-between mt-8 pt-6 pb-16 border-t border-gray-100">
       {prevStep ? (
         <button onClick={() => router.push(`/step/${prevStep}`)} className="btn-secondary flex items-center gap-2">
           <ChevronLeft size={16} />

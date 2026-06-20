@@ -152,6 +152,50 @@ export default function Step6() {
         </div>
       </div>
 
+      {/* Lot Listing */}
+      <div className="card mb-6">
+        <Section title="รายละเอียดการแบ่งแปลง">
+          {landAnalysis.lotCount > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-gray-400 uppercase text-xs">
+                    <th className="py-2 text-left font-bold">แปลง</th>
+                    <th className="py-2 text-right font-bold">ขนาด (ตร.วา)</th>
+                    <th className="py-2 text-right font-bold">ราคาต่อแปลง</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.from({ length: landAnalysis.lotCount }, (_, i) => (
+                    <tr key={i} className="border-b last:border-0">
+                      <td className="py-1.5 text-gray-600">{i + 1}</td>
+                      <td className="py-1.5 text-right">{landAnalysis.lotSizeSqWah.toLocaleString()}</td>
+                      <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * landAnalysis.lotSizeSqWah)}</td>
+                    </tr>
+                  ))}
+                  {landAnalysis.leftoverSqWah > 0 && (
+                    <tr className="border-b text-gray-400 italic">
+                      <td className="py-1.5">เศษที่ดินเหลือ</td>
+                      <td className="py-1.5 text-right">{landAnalysis.leftoverSqWah.toFixed(1)}</td>
+                      <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                    </tr>
+                  )}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 font-bold">
+                    <td className="py-2">รวม {landAnalysis.lotCount} แปลง{landAnalysis.leftoverSqWah > 0 ? " + เศษ" : ""}</td>
+                    <td className="py-2 text-right">{(landAnalysis.lotCount * landAnalysis.lotSizeSqWah + landAnalysis.leftoverSqWah).toLocaleString()}</td>
+                    <td className="py-2 text-right text-brand-700">{formatThb(financial.grossRevenue + financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">ยังไม่มีข้อมูลการแบ่งแปลง</p>
+          )}
+        </Section>
+      </div>
+
       {/* Comparison Summary */}
       <div className="card mb-6">
         <Section title="เปรียบเทียบกลยุทธ์">
