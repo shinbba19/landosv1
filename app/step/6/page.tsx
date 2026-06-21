@@ -35,6 +35,8 @@ export default function Step6() {
   };
   const totalSqWah = toSqWah(landInput.rai, landInput.ngan, landInput.sqWah);
   const acquisitionCost = landInput.acquisitionCost || landInput.landPrice;
+  const leftoverRevenue = financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah;
+  const totalRevenue = financial.grossRevenue + leftoverRevenue;
 
   const ZONING_LABEL: Record<string, string> = {
     yellow: "สีเหลือง", orange: "สีส้ม", red: "สีแดง",
@@ -136,7 +138,7 @@ export default function Step6() {
           </Section>
           <Section title="การวิเคราะห์การเงิน (Develop & Sell)">
             <Row label="ราคาขายต่อ ตร.วา" value={formatThb(financial.sellingPricePerSqWah)} />
-            <Row label="รายได้รวมโดยประมาณ" value={formatThb(financial.grossRevenue)} />
+            <Row label="รายได้รวมโดยประมาณ" value={formatThb(totalRevenue)} />
             <Row label="ภาษี 5% (ราคาขายจริง)" value={`−${formatThb(financial.developTax)}`} />
             <Row label="ค่านายหน้า 3%" value={`−${formatThb(financial.developCommission)}`} />
             <Row label="กำไรสุทธิ" value={formatThb(financial.grossProfit)} />
@@ -205,7 +207,7 @@ export default function Step6() {
             <div className="text-sm font-bold text-blue-600 text-center">Quick Sell</div>
             <div className="text-sm font-bold text-brand-600 text-center">Develop & Sell</div>
             {[
-              ["รายได้", formatThb(financial.quickSellTotal || 0), formatThb(financial.grossRevenue)],
+              ["รายได้", formatThb(financial.quickSellTotal || 0), formatThb(totalRevenue)],
               ["กำไร", formatThb(financial.quickSellProfit), formatThb(financial.grossProfit)],
               ["ROI", `${financial.quickSellRoi.toFixed(1)}%`, `${financial.roi.toFixed(1)}%`],
               ["ระยะเวลา", "1–3 เดือน", "12–36 เดือน"],
