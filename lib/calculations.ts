@@ -39,14 +39,14 @@ export function formatThb(value: number): string {
 export function calcLandAnalysis(
   input: LandInput,
   roadDeductionPct: number,
-  lotSizeSqWah: number
-): Omit<LandAnalysis, "roadDeductionPct" | "lotSizeSqWah"> {
+  lotCount: number
+): Omit<LandAnalysis, "roadDeductionPct" | "lotCount"> {
   const totalSqWah = toSqWah(input.rai, input.ngan, input.sqWah);
   const roadAreaSqWah = totalSqWah * (roadDeductionPct / 100);
   const usableAreaSqWah = totalSqWah - roadAreaSqWah;
-  const lotCount = Math.floor(usableAreaSqWah / lotSizeSqWah);
-  const leftoverSqWah = usableAreaSqWah - lotCount * lotSizeSqWah;
-  return { totalSqWah, roadAreaSqWah, usableAreaSqWah, lotCount, leftoverSqWah };
+  const lotSizeSqWah = lotCount > 0 ? Math.floor(usableAreaSqWah / lotCount) : 0;
+  const leftoverSqWah = lotCount > 0 ? usableAreaSqWah - lotCount * lotSizeSqWah : 0;
+  return { totalSqWah, roadAreaSqWah, usableAreaSqWah, lotSizeSqWah, leftoverSqWah };
 }
 
 export function calcDevCost(

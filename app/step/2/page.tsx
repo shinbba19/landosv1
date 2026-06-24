@@ -34,10 +34,10 @@ export default function Step2() {
 
   useEffect(() => {
     if (totalSqWah === 0) return;
-    const result = calcLandAnalysis(landInput, landAnalysis.roadDeductionPct, landAnalysis.lotSizeSqWah);
+    const result = calcLandAnalysis(landInput, landAnalysis.roadDeductionPct, landAnalysis.lotCount);
     updateLandAnalysis({ ...result });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [landInput, landAnalysis.roadDeductionPct, landAnalysis.lotSizeSqWah]);
+  }, [landInput, landAnalysis.roadDeductionPct, landAnalysis.lotCount]);
 
   const pieData = [
     { name: "พื้นที่จัดสรร", value: landAnalysis.lotCount * landAnalysis.lotSizeSqWah },
@@ -113,18 +113,20 @@ export default function Step2() {
             )}
           </div>
           <div>
-            <label className="label">ขนาดแปลงมาตรฐาน</label>
+            <label className="label">จำนวนแปลงที่ต้องการ</label>
             <div className="relative">
               <input
-                type="number" min={1}
+                type="number" min={0}
                 className="input-field pr-12"
-                value={landAnalysis.lotSizeSqWah}
-                onChange={(e) => updateLandAnalysis({ lotSizeSqWah: parseFloat(e.target.value) || 1 })}
-                placeholder="50"
+                value={landAnalysis.lotCount || ""}
+                onChange={(e) => updateLandAnalysis({ lotCount: parseInt(e.target.value) || 0 })}
+                placeholder="เช่น 8"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">ตร.วา</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">แปลง</span>
             </div>
-            <p className="text-xs text-gray-400 mt-1">= {(landAnalysis.lotSizeSqWah * 4).toLocaleString()} ตร.ม.</p>
+            {landAnalysis.lotCount > 0 && landAnalysis.lotSizeSqWah > 0 && (
+              <p className="text-xs text-gray-400 mt-1">≈ แปลงละ {landAnalysis.lotSizeSqWah.toLocaleString()} ตร.วา ({(landAnalysis.lotSizeSqWah * 4).toLocaleString()} ตร.ม.)</p>
+            )}
           </div>
         </div>
       </div>
@@ -136,7 +138,7 @@ export default function Step2() {
           { label: "พื้นที่ทั้งหมด", value: formatArea(totalSqWah), sub: `${totalSqWah.toLocaleString()} ตร.วา` },
           { label: "หักถนน / สาธารณูปโภค", value: formatArea(landAnalysis.roadAreaSqWah), sub: `${landAnalysis.roadDeductionPct}%` },
           { label: "พื้นที่ขายได้", value: formatArea(landAnalysis.usableAreaSqWah), sub: "✓ Saleable Area" },
-          { label: "จำนวนแปลงโดยประมาณ", value: `${landAnalysis.lotCount} แปลง`, sub: `แปลงละ ${landAnalysis.lotSizeSqWah} ตร.วา` },
+          { label: "ขนาดต่อแปลง", value: landAnalysis.lotSizeSqWah > 0 ? `${landAnalysis.lotSizeSqWah} ตร.วา` : "—", sub: landAnalysis.lotCount > 0 ? `${landAnalysis.lotCount} แปลง` : "ยังไม่ระบุจำนวน" },
         ].map((s) => (
           <div key={s.label} className="stat-card">
             <p className="text-xs text-gray-500 mb-1">{s.label}</p>

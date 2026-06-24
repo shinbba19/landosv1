@@ -14,12 +14,12 @@ export interface LandInput {
 
 export interface LandAnalysis {
   roadDeductionPct: number;
-  lotSizeSqWah: number;
+  lotCount: number;
   // computed
   totalSqWah: number;
   roadAreaSqWah: number;
   usableAreaSqWah: number;
-  lotCount: number;
+  lotSizeSqWah: number;
   leftoverSqWah: number;
 }
 

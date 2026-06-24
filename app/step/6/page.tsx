@@ -120,8 +120,8 @@ export default function Step6() {
           <Section title="การวิเคราะห์ที่ดิน">
             <Row label="หักถนน/สาธารณูปโภค" value={`${landAnalysis.roadDeductionPct}% (${formatArea(landAnalysis.roadAreaSqWah)})`} />
             <Row label="พื้นที่ขายได้" value={formatArea(landAnalysis.usableAreaSqWah)} />
-            <Row label="ขนาดแปลงมาตรฐาน" value={`${landAnalysis.lotSizeSqWah} ตร.วา`} />
-            <Row label="จำนวนแปลงโดยประมาณ" value={`${landAnalysis.lotCount} แปลง`} highlight />
+            <Row label="จำนวนแปลง" value={`${landAnalysis.lotCount} แปลง`} highlight />
+            <Row label="ขนาดต่อแปลง" value={`${landAnalysis.lotSizeSqWah} ตร.วา`} />
           </Section>
         </div>
 
@@ -242,7 +242,7 @@ export default function Step6() {
             <Row label="ค่าก่อสร้างถนน" value={`${devCost.roadCostPerSqm.toLocaleString()} บาท/ตร.ม.`} />
             <Row label="หักถนน/สาธารณูปโภค" value={`${landAnalysis.roadDeductionPct}%`} />
             <Row label="ค่าเบ็ดเตล็ด" value={`${devCost.miscPct}%`} />
-            <Row label="ขนาดแปลงมาตรฐาน" value={`${landAnalysis.lotSizeSqWah} ตร.วา`} />
+            <Row label="จำนวนแปลง" value={`${landAnalysis.lotCount} แปลง`} />
             <Row label="ค่าไฟฟ้า" value={`${devCost.electricityCostPerM.toLocaleString()} บาท/ม.`} />
           </div>
         </Section>

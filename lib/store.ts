@@ -12,9 +12,9 @@ const DEFAULT_LAND_INPUT: LandInput = {
 };
 
 const DEFAULT_LAND_ANALYSIS: LandAnalysis = {
-  roadDeductionPct: 15, lotSizeSqWah: 50,
+  roadDeductionPct: 15, lotCount: 0,
   totalSqWah: 0, roadAreaSqWah: 0, usableAreaSqWah: 0,
-  lotCount: 0, leftoverSqWah: 0,
+  lotSizeSqWah: 0, leftoverSqWah: 0,
 };
 
 const DEFAULT_DEV_COST: DevCost = {
