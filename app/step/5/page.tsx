@@ -34,6 +34,8 @@ function CompareRow({ label, qsValue, dsValue, highlight }: {
 export default function Step5() {
   const { landInput, landAnalysis, devCost, financial, setStep } = useStore();
   const { lotCount, lotSizeSqWah, usableAreaSqWah, totalSqWah } = landAnalysis;
+  const leftoverRevenue = financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah;
+  const totalRevenue = financial.grossRevenue + leftoverRevenue;
 
   const qs = {
     capital: landInput.acquisitionCost || landInput.landPrice,
@@ -148,7 +150,7 @@ export default function Step5() {
           <div className="space-y-3">
             <div className="bg-brand-50 rounded-xl p-3">
               <p className="text-xs text-gray-500">รายได้รวมโดยประมาณ</p>
-              <p className="text-2xl font-bold text-brand-700">{formatThb(financial.grossRevenue)}</p>
+              <p className="text-2xl font-bold text-brand-700">{formatThb(totalRevenue)}</p>
             </div>
             <div className="bg-brand-50 rounded-xl p-3">
               <p className="text-xs text-gray-500">กำไรโดยประมาณ</p>
@@ -182,6 +184,47 @@ export default function Step5() {
         </div>
       </div>
 
+      {/* Lot Listing */}
+      {lotCount > 0 && (
+        <div className="card mb-6">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">รายละเอียดการแบ่งแปลง</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-gray-400 uppercase text-xs">
+                  <th className="py-2 text-left font-bold">แปลง</th>
+                  <th className="py-2 text-right font-bold">ขนาด (ตร.วา)</th>
+                  <th className="py-2 text-right font-bold">ราคาต่อแปลง</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: lotCount }, (_, i) => (
+                  <tr key={i} className="border-b last:border-0">
+                    <td className="py-1.5 text-gray-600">{i + 1}</td>
+                    <td className="py-1.5 text-right">{lotSizeSqWah.toLocaleString()}</td>
+                    <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * lotSizeSqWah)}</td>
+                  </tr>
+                ))}
+                {landAnalysis.leftoverSqWah > 0 && (
+                  <tr className="border-b text-gray-400 italic">
+                    <td className="py-1.5">เศษที่ดินเหลือ</td>
+                    <td className="py-1.5 text-right">{landAnalysis.leftoverSqWah.toFixed(1)}</td>
+                    <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 font-bold">
+                  <td className="py-2">รวม {lotCount} แปลง{landAnalysis.leftoverSqWah > 0 ? " + เศษ" : ""}</td>
+                  <td className="py-2 text-right">{(lotCount * lotSizeSqWah + landAnalysis.leftoverSqWah).toLocaleString()}</td>
+                  <td className="py-2 text-right text-brand-700">{formatThb(financial.grossRevenue + financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Detail Comparison Table */}
       <div className="card mb-6">
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">ตารางเปรียบเทียบ</h3>
@@ -191,7 +234,7 @@ export default function Step5() {
           <div className="text-center text-brand-600">Develop & Sell</div>
         </div>
         <CompareRow label="เงินลงทุนที่ต้องการ" qsValue={formatThb(qs.capital)} dsValue={formatThb(ds.capital)} />
-        <CompareRow label="รายได้รวม" qsValue={formatThb(financial.quickSellTotal || 0)} dsValue={formatThb(financial.grossRevenue)} />
+        <CompareRow label="รายได้รวม" qsValue={formatThb(financial.quickSellTotal || 0)} dsValue={formatThb(totalRevenue)} />
         <CompareRow label="ต้นทุนที่ดิน / โครงการ" qsValue={`−${formatThb(qs.capital)}`} dsValue={`−${formatThb(ds.capital)}`} />
         <CompareRow label="ภาษี 5%" qsValue={`−${formatThb(financial.quickSellTax)}`} dsValue={`−${formatThb(financial.developTax)}`} />
         <CompareRow label="ค่านายหน้า 3%" qsValue={`−${formatThb(financial.quickSellCommission)}`} dsValue={`−${formatThb(financial.developCommission)}`} />

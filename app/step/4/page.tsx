@@ -24,6 +24,8 @@ export default function Step4() {
   const { landInput, landAnalysis, devCost, financial, updateFinancial, setStep } = useStore();
   const { lotCount, lotSizeSqWah } = landAnalysis;
   const acquisitionCost = landInput.acquisitionCost || landInput.landPrice;
+  const leftoverRevenue = financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah;
+  const totalRevenue = financial.grossRevenue + leftoverRevenue;
 
   useEffect(() => {
     if (!financial.sellingPricePerSqWah) return;
@@ -44,7 +46,7 @@ export default function Step4() {
   const waterfallData = [
     { name: "ต้นทุนที่ดิน", value: -acquisitionCost, fill: "#ef4444" },
     { name: "ค่าพัฒนา", value: -devCost.totalInfraCost, fill: "#f97316" },
-    { name: "รายได้รวม", value: financial.grossRevenue, fill: "#22c55e" },
+    { name: "รายได้รวม", value: totalRevenue, fill: "#22c55e" },
     { name: "กำไรสุทธิ", value: financial.grossProfit, fill: financial.grossProfit >= 0 ? "#16a34a" : "#dc2626" },
   ];
 
@@ -98,7 +100,7 @@ export default function Step4() {
       {/* KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard label="ต้นทุนโครงการรวม" value={formatThb(financial.totalProjectCost)} sub="Land + Infrastructure" />
-        <StatCard label="รายได้รวมโดยประมาณ" value={formatThb(financial.grossRevenue)} sub={`${lotCount} แปลง × ${lotSizeSqWah} ตร.วา`} />
+        <StatCard label="รายได้รวมโดยประมาณ" value={formatThb(totalRevenue)} sub={`${lotCount} แปลง × ${lotSizeSqWah} ตร.วา`} />
         <StatCard label="กำไรสุทธิ (หลังภาษี+นายหน้า)" value={formatThb(financial.grossProfit)}
           sub={`Gross Margin ${financial.grossMargin.toFixed(1)}%`}
           highlight={financial.grossProfit > 0} />
@@ -132,7 +134,7 @@ export default function Step4() {
             <h3 className="text-sm font-semibold text-gray-500 mb-3">สรุป Develop &amp; Sell</h3>
             <div className="space-y-1.5 text-sm">
               {[
-                ["รายได้รวม", formatThb(financial.grossRevenue)],
+                ["รายได้รวม", formatThb(totalRevenue)],
                 ["หัก ต้นทุนโครงการ", `−${formatThb(financial.totalProjectCost)}`],
                 ["หัก ภาษี 5% (ราคาขายจริง)", `−${formatThb(financial.developTax)}`],
                 ["หัก ค่านายหน้า 3%", `−${formatThb(financial.developCommission)}`],
@@ -145,6 +147,47 @@ export default function Step4() {
                 <span>กำไรสุทธิ</span><span>{formatThb(financial.grossProfit)}</span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lot Listing */}
+      {lotCount > 0 && financial.sellingPricePerSqWah > 0 && (
+        <div className="card mb-6">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">รายละเอียดการแบ่งแปลง</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-gray-400 uppercase text-xs">
+                  <th className="py-2 text-left font-bold">แปลง</th>
+                  <th className="py-2 text-right font-bold">ขนาด (ตร.วา)</th>
+                  <th className="py-2 text-right font-bold">ราคาต่อแปลง</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: lotCount }, (_, i) => (
+                  <tr key={i} className="border-b last:border-0">
+                    <td className="py-1.5 text-gray-600">{i + 1}</td>
+                    <td className="py-1.5 text-right">{lotSizeSqWah.toLocaleString()}</td>
+                    <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * lotSizeSqWah)}</td>
+                  </tr>
+                ))}
+                {landAnalysis.leftoverSqWah > 0 && (
+                  <tr className="border-b text-gray-400 italic">
+                    <td className="py-1.5">เศษที่ดินเหลือ</td>
+                    <td className="py-1.5 text-right">{landAnalysis.leftoverSqWah.toFixed(1)}</td>
+                    <td className="py-1.5 text-right">{formatThb(financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 font-bold">
+                  <td className="py-2">รวม {lotCount} แปลง{landAnalysis.leftoverSqWah > 0 ? " + เศษ" : ""}</td>
+                  <td className="py-2 text-right">{(lotCount * lotSizeSqWah + landAnalysis.leftoverSqWah).toLocaleString()}</td>
+                  <td className="py-2 text-right text-brand-700">{formatThb(financial.grossRevenue + financial.sellingPricePerSqWah * landAnalysis.leftoverSqWah)}</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       )}
